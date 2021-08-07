@@ -33,15 +33,10 @@ class ButtonTransparentMain extends StatelessWidget {
         alignment: Alignment.center,
         height: height,
         width: width,
-        decoration: BoxDecoration(
-            color: Colors.transparent,
-            border: Border.all(width: 1, color: borderColor)),
+        decoration: BoxDecoration(color: Colors.transparent, border: Border.all(width: 1, color: borderColor)),
         child: Text(
           text,
-          style: TextStyle(
-              color: textColor,
-              fontWeight: FontWeight.w400,
-              fontSize: fontSize),
+          style: TextStyle(color: textColor, fontWeight: FontWeight.w400, fontSize: fontSize),
         ),
       ),
     );

@@ -25,10 +25,7 @@ class OptionsButton extends StatelessWidget {
         ),
         Text(
           text,
-          style: const TextStyle(
-              color: Colors.white70,
-              fontWeight: FontWeight.w400,
-              fontSize: 23.0),
+          style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w400, fontSize: 23.0),
         ),
         const Expanded(
           child: Align(

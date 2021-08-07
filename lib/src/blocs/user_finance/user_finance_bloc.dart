@@ -6,22 +6,20 @@ import 'package:flutter_firebase/src/utils/prefs_manager.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../resources/repository.dart';
-import '../../utils/validator.dart';
-import '../../utils/values/string_constants.dart';
-import '../bloc.dart';
+import 'package:flutter_firebase/src/resources/repository.dart';
+import 'package:flutter_firebase/src/utils/validator.dart';
+import 'package:flutter_firebase/src/utils/values/string_constants.dart';
+import 'package:flutter_firebase/src/blocs/bloc.dart';
 
 class UserFinanceBloc implements Bloc {
   final _repository = Repository();
   final _financeValue = BehaviorSubject<String>();
 
-  Stream<String> get financeValue =>
-      _financeValue.stream.transform(_validateFinanceValue);
+  Stream<String> get financeValue => _financeValue.stream.transform(_validateFinanceValue);
 
   Function(String) get changeFinanceValue => _financeValue.sink.add;
 
-  final _validateFinanceValue =
-      StreamTransformer<String, String>.fromHandlers(handleData: (value, sink) {
+  final _validateFinanceValue = StreamTransformer<String, String>.fromHandlers(handleData: (value, sink) {
     if (Validator.validateFinanceValue(value)) {
       sink.add(value);
     } else {
@@ -30,7 +28,7 @@ class UserFinanceBloc implements Bloc {
   });
 
   bool validateFinance() {
-    return _financeValue.value != null && _financeValue.value.isNotEmpty;
+    return _financeValue.value.isNotEmpty;
   }
 
   Stream<User?> get currentUser => _repository.onAuthStateChange;
@@ -44,25 +42,26 @@ class UserFinanceBloc implements Bloc {
     return displayName;
   }
 
-  Stream<DocumentSnapshot> userFinanceDoc(String? userUID) =>
-      _repository.userFinanceDoc(userUID!);
+  Stream<DocumentSnapshot> userFinanceDoc(String? userUID) => _repository.userFinanceDoc(userUID!);
 
   Future<void> setUserBudget() async {
     String userUID = await getUserUID();
 
-    return _repository.setUserBudget(
-        userUID, double.tryParse(_financeValue.value));
+    return _repository.setUserBudget(userUID, double.tryParse(_financeValue.value));
   }
 
-  Stream<QuerySnapshot> expenseList(String? userUID) =>
-      _repository.expensesList(userUID!);
-  Stream<QuerySnapshot> lastExpense(String? userUID) =>
-      _repository.lastExpense(userUID!);
+  Stream<QuerySnapshot> expenseList(String? userUID) => _repository.expensesList(userUID!);
+  Stream<QuerySnapshot> lastExpense(String? userUID) => _repository.lastExpense(userUID!);
+
   Future<void> addNewExpense() async {
     String userUID = await getUserUID();
 
-    return _repository.addNewExpense(
-        userUID, double.tryParse(_financeValue.value));
+    print('userUID $userUID');
+    print('Value: ${double.tryParse(_financeValue.value)}');
+
+    await _repository.addNewExpense(userUID, double.tryParse(_financeValue.value));
+
+    return _repository.updateTotal(userUID);
   }
 
   @override

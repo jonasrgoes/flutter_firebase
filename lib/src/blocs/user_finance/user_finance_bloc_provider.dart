@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'user_finance_bloc.dart';
+import 'package:flutter_firebase/src/blocs/user_finance/user_finance_bloc.dart';
 
 class UserFinanceBlocProvider extends InheritedWidget {
   final bloc = UserFinanceBloc();

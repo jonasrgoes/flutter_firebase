@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'authentication_bloc.dart';
+import 'package:flutter_firebase/src/blocs/authentication/authentication_bloc.dart';
 
 class AuthenticationBlocProvider extends InheritedWidget {
   final bloc = AuthenticationBloc();
 
-  AuthenticationBlocProvider({Key? key, required Widget child})
-      : super(key: key, child: child);
+  AuthenticationBlocProvider({Key? key, required Widget child}) : super(key: key, child: child);
 
   @override
   // ignore: avoid_renaming_method_parameters
@@ -15,8 +14,6 @@ class AuthenticationBlocProvider extends InheritedWidget {
   }
 
   static AuthenticationBloc of(BuildContext context) {
-    return (context
-            .dependOnInheritedWidgetOfExactType<AuthenticationBlocProvider>())!
-        .bloc;
+    return (context.dependOnInheritedWidgetOfExactType<AuthenticationBlocProvider>())!.bloc;
   }
 }

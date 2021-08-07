@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/src/blocs/authentication/authentication_bloc.dart';
 import 'package:flutter_firebase/src/blocs/authentication/authentication_bloc_provider.dart';
@@ -27,8 +29,7 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage>
-    with SingleTickerProviderStateMixin {
+class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late AuthenticationBloc _authBloc;
@@ -77,24 +78,19 @@ class _LoginPageState extends State<LoginPage>
   void _toggleAuthButtonsScale(bool isLogin) {
     setState(() {
       if (isLogin) {
-        _loginContainerHeight =
-            _loginContainerHeight == maxHeight ? minHeight : maxHeight;
-        _loginContainerWidth =
-            _loginContainerWidth == maxWidth ? minWidth : maxWidth;
+        _loginContainerHeight = _loginContainerHeight == maxHeight ? minHeight : maxHeight;
+        _loginContainerWidth = _loginContainerWidth == maxWidth ? minWidth : maxWidth;
         _scaleDownSignUpBtn();
         _loginContainerOpened = !_loginContainerOpened;
       } else {
-        _signUpContainerHeight =
-            _signUpContainerHeight == maxHeight ? minHeight : maxHeight;
-        _signUpContainerWidth =
-            _signUpContainerWidth == maxWidth ? minWidth : maxWidth;
+        _signUpContainerHeight = _signUpContainerHeight == maxHeight ? minHeight : maxHeight;
+        _signUpContainerWidth = _signUpContainerWidth == maxWidth ? minWidth : maxWidth;
         _scaleDownLoginBtn();
         _signUpContainerOpened = !_signUpContainerOpened;
       }
 
-      _formsContainerMargin = _formsContainerMargin == minFormsContainerMargin
-          ? maxFormsContainerMargin
-          : minFormsContainerMargin;
+      _formsContainerMargin =
+          _formsContainerMargin == minFormsContainerMargin ? maxFormsContainerMargin : minFormsContainerMargin;
     });
   }
 
@@ -115,23 +111,25 @@ class _LoginPageState extends State<LoginPage>
   }
 
   void _toggleNuLogoAndGoogleBtn() {
-    final bool isAnyContainerExpanded =
-        _controller.status == AnimationStatus.completed;
+    final bool isAnyContainerExpanded = _controller.status == AnimationStatus.completed;
 
     _controller.fling(velocity: isAnyContainerExpanded ? -2 : 2);
   }
 
   void showErrorMessage(String message) {
-    final snackbar =
-        SnackBar(content: Text(message), duration: const Duration(seconds: 2));
-    _scaffoldKey.currentState?.showSnackBar(snackbar);
+    debugPrint(message);
+
+    final snackbar = SnackBar(content: Text(message), duration: const Duration(seconds: 2));
+
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
-  double? lerp(double min, double max) =>
-      lerpDouble(min, max, _controller.value);
+  double? lerp(double min, double max) => lerpDouble(min, max, _controller.value);
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Build Login Page');
+
     return Scaffold(
         key: _scaffoldKey,
         backgroundColor: ColorConstant.colorMainPurple,
@@ -156,8 +154,7 @@ class _LoginPageState extends State<LoginPage>
                               )),
                           Container(
                               height: 60.0,
-                              margin:
-                                  const EdgeInsets.only(top: 10.0, bottom: 5),
+                              margin: const EdgeInsets.only(top: 10.0, bottom: 5),
                               child: const Icon(
                                 Icons.keyboard_arrow_down,
                                 color: Colors.white70,
@@ -185,8 +182,7 @@ class _LoginPageState extends State<LoginPage>
                             ? Container()
                             : GestureDetector(
                                 onTap: () {
-                                  if (!_signUpContainerOpened &&
-                                      !_loginContainerOpened) {
+                                  if (!_signUpContainerOpened && !_loginContainerOpened) {
                                     _toggleAuthButtonsScale(false);
                                     _toggleNuLogoAndGoogleBtn();
                                   }
@@ -200,8 +196,7 @@ class _LoginPageState extends State<LoginPage>
                                   curve: Curves.fastOutSlowIn,
                                   decoration: const BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                   ),
                                   child: AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 200),
@@ -216,8 +211,7 @@ class _LoginPageState extends State<LoginPage>
                                                   child: GestureDetector(
                                                     onTap: () {
                                                       if (_signUpContainerOpened) {
-                                                        _toggleAuthButtonsScale(
-                                                            false);
+                                                        _toggleAuthButtonsScale(false);
                                                         _toggleNuLogoAndGoogleBtn();
                                                       }
                                                     },
@@ -234,70 +228,64 @@ class _LoginPageState extends State<LoginPage>
                                                     child: Column(
                                                       children: <Widget>[
                                                         StreamBuilder(
-                                                          stream:
-                                                              _authBloc.email,
-                                                          builder: (context,
-                                                              snapshot) {
-                                                            return FormFieldMain(
-                                                              hintText:
-                                                                  'Email...',
-                                                              onChanged: _authBloc
-                                                                  .changeEmail,
-                                                              errorText: snapshot
-                                                                  .error
-                                                                  .toString(),
-                                                              marginLeft: 20.0,
-                                                              marginRight: 20.0,
-                                                              marginTop: 0,
-                                                              textInputType:
-                                                                  TextInputType
-                                                                      .text,
-                                                              obscured: false,
-                                                            );
-                                                          },
-                                                        ),
+                                                            stream: _authBloc.email,
+                                                            builder: (context, snapshot) {
+                                                              debugPrint('snapshot.hasData: ${snapshot.hasData}');
+                                                              debugPrint('snapshot.data: ${snapshot.data.toString()}');
+                                                              debugPrint('snapshot.hasError: ${snapshot.hasError}');
+                                                              debugPrint(
+                                                                  'snapshot.error: ${snapshot.error.toString()}');
+
+                                                              return FormFieldMain(
+                                                                hintText: 'Email...',
+                                                                onChanged: _authBloc.changeEmail,
+                                                                errorText:
+                                                                    snapshot.hasError ? snapshot.error.toString() : '',
+                                                                marginLeft: 20.0,
+                                                                marginRight: 20.0,
+                                                                marginTop: 0,
+                                                                textInputType: TextInputType.text,
+                                                                obscured: false,
+                                                              );
+                                                            }),
                                                         StreamBuilder(
-                                                          stream: _authBloc
-                                                              .password,
-                                                          builder: (context,
-                                                              snapshot) {
+                                                          stream: _authBloc.password,
+                                                          builder: (context, snapshot) {
+                                                            debugPrint('snapshot.hasData: ${snapshot.hasData}');
+                                                            debugPrint('snapshot.data: ${snapshot.data.toString()}');
+                                                            debugPrint('snapshot.hasError: ${snapshot.hasError}');
+                                                            debugPrint('snapshot.error: ${snapshot.error.toString()}');
+
                                                             return FormFieldMain(
-                                                              onChanged: _authBloc
-                                                                  .changePassword,
-                                                              errorText: snapshot
-                                                                  .error
-                                                                  .toString(),
-                                                              hintText:
-                                                                  'Password...',
+                                                              onChanged: _authBloc.changePassword,
+                                                              errorText:
+                                                                  snapshot.hasError ? snapshot.error.toString() : '',
+                                                              hintText: 'Password...',
                                                               marginLeft: 20.0,
                                                               marginRight: 20.0,
                                                               marginTop: 15.0,
-                                                              textInputType:
-                                                                  TextInputType
-                                                                      .text,
+                                                              textInputType: TextInputType.text,
                                                               obscured: true,
                                                             );
                                                           },
                                                         ),
                                                         StreamBuilder(
-                                                          stream: _authBloc
-                                                              .displayName,
-                                                          builder: (context,
-                                                              snapshot) {
+                                                          stream: _authBloc.displayName,
+                                                          builder: (context, snapshot) {
+                                                            debugPrint('snapshot.hasData: ${snapshot.hasData}');
+                                                            debugPrint('snapshot.data: ${snapshot.data.toString()}');
+                                                            debugPrint('snapshot.hasError: ${snapshot.hasError}');
+                                                            debugPrint('snapshot.error: ${snapshot.error.toString()}');
+
                                                             return FormFieldMain(
-                                                              onChanged: _authBloc
-                                                                  .changeDisplayName,
-                                                              errorText: snapshot
-                                                                  .error
-                                                                  .toString(),
-                                                              hintText:
-                                                                  'Display Name...',
+                                                              onChanged: _authBloc.changeDisplayName,
+                                                              errorText:
+                                                                  snapshot.hasError ? snapshot.error.toString() : '',
+                                                              hintText: 'Display Name...',
                                                               marginLeft: 20.0,
                                                               marginRight: 20.0,
                                                               marginTop: 15.0,
-                                                              textInputType:
-                                                                  TextInputType
-                                                                      .text,
+                                                              textInputType: TextInputType.text,
                                                               obscured: false,
                                                             );
                                                           },
@@ -309,66 +297,43 @@ class _LoginPageState extends State<LoginPage>
                                                 Positioned.fill(
                                                   bottom: 15,
                                                   child: Align(
-                                                    alignment:
-                                                        Alignment.bottomCenter,
+                                                    alignment: Alignment.bottomCenter,
                                                     child: StreamBuilder(
-                                                        stream: _authBloc
-                                                            .signInStatus,
-                                                        builder: (context,
-                                                            snapshot) {
-                                                          if (!snapshot
-                                                                  .hasData ||
-                                                              snapshot
-                                                                  .hasError) {
+                                                        stream: _authBloc.signInStatus,
+                                                        builder: (context, snapshot) {
+                                                          debugPrint(jsonEncode(snapshot));
+                                                          if (!snapshot.hasData || snapshot.hasError) {
                                                             return ButtonTransparentMain(
-                                                              callback:
-                                                                  () async {
-                                                                if (_authBloc
-                                                                        .validateEmailAndPassword() &&
-                                                                    _authBloc
-                                                                        .validateDisplayName()) {
-                                                                  _authBloc
-                                                                      .saveCurrentUserDisplayName(
-                                                                          _prefs);
-                                                                  int response =
-                                                                      await _authBloc
-                                                                          .registerUser();
+                                                              callback: () async {
+                                                                // debugDumpApp();
+                                                                debugPrint('_authBloc.signInStatus');
+                                                                if (_authBloc.validateEmailAndPassword() &&
+                                                                    _authBloc.validateDisplayName()) {
+                                                                  _authBloc.saveCurrentUserDisplayName(_prefs);
+                                                                  int response = await _authBloc.registerUser();
 
-                                                                  if (response <
-                                                                      0) {
+                                                                  if (response < 0) {
                                                                     showErrorMessage(
-                                                                        StringConstants
-                                                                            .emailOrPasswordIncorrect);
+                                                                        StringConstants.emailOrPasswordIncorrect);
                                                                   } else {
                                                                     // TODO: send email confirmation
                                                                   }
                                                                 } else {
-                                                                  showErrorMessage(
-                                                                      StringConstants
-                                                                          .fillUpFormCorrectly);
+                                                                  showErrorMessage(StringConstants.fillUpFormCorrectly);
                                                                 }
                                                               },
                                                               height: 60.0,
-                                                              width:
-                                                                  MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width,
+                                                              width: MediaQuery.of(context).size.width,
                                                               fontSize: 20.0,
                                                               marginRight: 30.0,
                                                               marginLeft: 30.0,
                                                               text: 'Sign Up',
-                                                              borderColor:
-                                                                  ColorConstant
-                                                                      .colorMainPurple,
-                                                              textColor:
-                                                                  ColorConstant
-                                                                      .colorMainPurple,
+                                                              borderColor: ColorConstant.colorMainPurple,
+                                                              textColor: ColorConstant.colorMainPurple,
                                                             );
                                                           } else {
                                                             return const CircularProgressIndicator(
-                                                              backgroundColor:
-                                                                  Colors.white,
+                                                              backgroundColor: Colors.white,
                                                             );
                                                           }
                                                         }),
@@ -380,9 +345,7 @@ class _LoginPageState extends State<LoginPage>
                                         : const Text(
                                             'Sign Up',
                                             style: TextStyle(
-                                                color: Colors.black54,
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 25.0),
+                                                color: Colors.black54, fontWeight: FontWeight.w400, fontSize: 25.0),
                                           ),
                                   ),
                                 ),
@@ -398,8 +361,7 @@ class _LoginPageState extends State<LoginPage>
                             ? Container()
                             : GestureDetector(
                                 onTap: () {
-                                  if (!_loginContainerOpened &&
-                                      !_signUpContainerOpened) {
+                                  if (!_loginContainerOpened && !_signUpContainerOpened) {
                                     _toggleAuthButtonsScale(true);
                                     _toggleNuLogoAndGoogleBtn();
                                   }
@@ -413,8 +375,7 @@ class _LoginPageState extends State<LoginPage>
                                   curve: Curves.fastOutSlowIn,
                                   decoration: const BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                   ),
                                   child: AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 200),
@@ -430,8 +391,7 @@ class _LoginPageState extends State<LoginPage>
                                                   child: GestureDetector(
                                                     onTap: () {
                                                       if (_loginContainerOpened) {
-                                                        _toggleAuthButtonsScale(
-                                                            true);
+                                                        _toggleAuthButtonsScale(true);
                                                         _toggleNuLogoAndGoogleBtn();
                                                       }
                                                     },
@@ -451,47 +411,43 @@ class _LoginPageState extends State<LoginPage>
                                                     child: Column(
                                                       children: <Widget>[
                                                         StreamBuilder(
-                                                          stream:
-                                                              _authBloc.email,
-                                                          builder: (context,
-                                                              snapshot) {
+                                                          stream: _authBloc.email,
+                                                          builder: (context, snapshot) {
+                                                            debugPrint('snapshot.hasData: ${snapshot.hasData}');
+                                                            debugPrint('snapshot.data: ${snapshot.data.toString()}');
+                                                            debugPrint('snapshot.hasError: ${snapshot.hasError}');
+                                                            debugPrint('snapshot.error: ${snapshot.error.toString()}');
+
                                                             return FormFieldMain(
-                                                              onChanged: _authBloc
-                                                                  .changeEmail,
-                                                              errorText: snapshot
-                                                                  .error
-                                                                  .toString(),
-                                                              hintText:
-                                                                  'Email...',
+                                                              onChanged: _authBloc.changeEmail,
+                                                              errorText:
+                                                                  snapshot.hasError ? snapshot.error.toString() : '',
+                                                              hintText: 'Email...',
                                                               marginLeft: 20.0,
                                                               marginRight: 20.0,
                                                               marginTop: 0,
-                                                              textInputType:
-                                                                  TextInputType
-                                                                      .text,
+                                                              textInputType: TextInputType.text,
                                                               obscured: false,
                                                             );
                                                           },
                                                         ),
                                                         StreamBuilder(
-                                                          stream: _authBloc
-                                                              .password,
-                                                          builder: (context,
-                                                              snapshot) {
+                                                          stream: _authBloc.password,
+                                                          builder: (context, snapshot) {
+                                                            debugPrint('snapshot.hasData: ${snapshot.hasData}');
+                                                            debugPrint('snapshot.data: ${snapshot.data.toString()}');
+                                                            debugPrint('snapshot.hasError: ${snapshot.hasError}');
+                                                            debugPrint('snapshot.error: ${snapshot.error.toString()}');
+
                                                             return FormFieldMain(
-                                                              onChanged: _authBloc
-                                                                  .changePassword,
-                                                              errorText: snapshot
-                                                                  .error
-                                                                  .toString(),
-                                                              hintText:
-                                                                  'Password...',
+                                                              onChanged: _authBloc.changePassword,
+                                                              errorText:
+                                                                  snapshot.hasError ? snapshot.error.toString() : '',
+                                                              hintText: 'Password...',
                                                               marginLeft: 20.0,
                                                               marginRight: 20.0,
                                                               marginTop: 15.0,
-                                                              textInputType:
-                                                                  TextInputType
-                                                                      .text,
+                                                              textInputType: TextInputType.text,
                                                               obscured: true,
                                                             );
                                                           },
@@ -504,59 +460,36 @@ class _LoginPageState extends State<LoginPage>
                                                 Positioned.fill(
                                                   bottom: 15,
                                                   child: Align(
-                                                    alignment:
-                                                        Alignment.bottomCenter,
+                                                    alignment: Alignment.bottomCenter,
                                                     child: StreamBuilder(
-                                                        stream: _authBloc
-                                                            .signInStatus,
-                                                        builder: (context,
-                                                            snapshot) {
-                                                          if (!snapshot
-                                                                  .hasData ||
-                                                              snapshot
-                                                                  .hasError) {
+                                                        stream: _authBloc.signInStatus,
+                                                        builder: (context, snapshot) {
+                                                          if (!snapshot.hasData || snapshot.hasError) {
                                                             return ButtonTransparentMain(
-                                                              callback:
-                                                                  () async {
-                                                                if (_authBloc
-                                                                    .validateEmailAndPassword()) {
-                                                                  int response =
-                                                                      await _authBloc
-                                                                          .loginUser();
+                                                              callback: () async {
+                                                                if (_authBloc.validateEmailAndPassword()) {
+                                                                  int response = await _authBloc.loginUser();
 
-                                                                  if (response <
-                                                                      0) {
+                                                                  if (response < 0) {
                                                                     showErrorMessage(
-                                                                        StringConstants
-                                                                            .emailOrPasswordIncorrect);
+                                                                        StringConstants.emailOrPasswordIncorrect);
                                                                   }
                                                                 } else {
-                                                                  showErrorMessage(
-                                                                      StringConstants
-                                                                          .fillUpFormCorrectly);
+                                                                  showErrorMessage(StringConstants.fillUpFormCorrectly);
                                                                 }
                                                               },
                                                               height: 60.0,
-                                                              width:
-                                                                  MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width,
+                                                              width: MediaQuery.of(context).size.width,
                                                               fontSize: 20.0,
                                                               marginRight: 30.0,
                                                               marginLeft: 30.0,
                                                               text: 'Login',
-                                                              borderColor:
-                                                                  ColorConstant
-                                                                      .colorMainPurple,
-                                                              textColor:
-                                                                  ColorConstant
-                                                                      .colorMainPurple,
+                                                              borderColor: ColorConstant.colorMainPurple,
+                                                              textColor: ColorConstant.colorMainPurple,
                                                             );
                                                           } else {
                                                             return const CircularProgressIndicator(
-                                                              backgroundColor:
-                                                                  Colors.white,
+                                                              backgroundColor: Colors.white,
                                                             );
                                                           }
                                                         }),
@@ -568,9 +501,7 @@ class _LoginPageState extends State<LoginPage>
                                         : const Text(
                                             'Login',
                                             style: TextStyle(
-                                                color: Colors.black54,
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 25.0),
+                                                color: Colors.black54, fontWeight: FontWeight.w400, fontSize: 25.0),
                                           ),
                                   ),
                                 ),
@@ -601,8 +532,7 @@ class _LoginPageState extends State<LoginPage>
                             child: Container(
                               padding: const EdgeInsets.all(10.0),
                               color: Colors.white,
-                              child:
-                                  Image.asset('assets/images/googleicon.png'),
+                              child: Image.asset('assets/images/googleicon.png'),
                             ),
                           ),
                         )),

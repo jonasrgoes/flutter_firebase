@@ -12,5 +12,5 @@ upgrade:
 	dart pub upgrade --major-versions
 
 run:
-	flutter run -d chrome
+	rm -rf build && flutter run -d chrome
 

@@ -5,10 +5,10 @@ import 'package:flutter_firebase/src/blocs/user_finance/user_finance_bloc.dart';
 import 'package:flutter_firebase/src/blocs/user_finance/user_finance_bloc_provider.dart';
 import 'package:flutter_firebase/src/ui/widgets/bottom_action_button.dart';
 import 'package:flutter_firebase/src/ui/widgets/options_buttons.dart';
-import '../../utils/values/colors.dart';
-import '../widgets/button_transparent_main.dart';
-import '../widgets/form_field_main.dart';
-import 'finance_history_page.dart';
+import 'package:flutter_firebase/src/utils/values/colors.dart';
+import 'package:flutter_firebase/src/ui/widgets/button_transparent_main.dart';
+import 'package:flutter_firebase/src/ui/widgets/form_field_main.dart';
+import 'package:flutter_firebase/src/ui/home/finance_history_page.dart';
 
 const double minTop = 145;
 const double maxQuickActionsMargin = 50;
@@ -21,8 +21,7 @@ class HomePageContent extends StatefulWidget {
   _HomePageContentState createState() => _HomePageContentState();
 }
 
-class _HomePageContentState extends State<HomePageContent>
-    with SingleTickerProviderStateMixin {
+class _HomePageContentState extends State<HomePageContent> with SingleTickerProviderStateMixin {
   AnimationController? _controller;
 
   UserFinanceBloc? _userFinanceBloc;
@@ -30,7 +29,7 @@ class _HomePageContentState extends State<HomePageContent>
   bool _hideOptions = true;
   bool _isUserBudgetAlreadySet = false;
 
-  double _expenseProgressValue = 0;
+  double _expenseProgressValue = .0;
 
   @override
   void didChangeDependencies() {
@@ -56,14 +55,16 @@ class _HomePageContentState extends State<HomePageContent>
   }
 
   void showErrorMessage(BuildContext context, String message) {
-    final snackbar =
-        SnackBar(content: Text(message), duration: const Duration(seconds: 2));
-    Scaffold.of(context).showSnackBar(snackbar);
+    debugPrint('Error Message: $message');
+
+    final snackbar = SnackBar(content: Text(message), duration: const Duration(seconds: 2));
+
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
   void _handleDragUpdate(DragUpdateDetails details) {
-    _controller!.value += (details.primaryDelta ?? 0) / minTop;
-    print("VALUE: ${_controller!.value}");
+    _controller!.value += (details.primaryDelta ?? .0) / minTop;
+    debugPrint("VALUE: ${_controller!.value}");
 
     if (_controller!.value > .5) {
       _hideOptions = false;
@@ -73,8 +74,7 @@ class _HomePageContentState extends State<HomePageContent>
   }
 
   void _handleDragEnd(DragEndDetails details) {
-    if (_controller!.isAnimating ||
-        _controller!.status == AnimationStatus.completed) return;
+    if (_controller!.isAnimating || _controller!.status == AnimationStatus.completed) return;
 
     if (_controller!.value > 0.5) {
       _controller!.fling(velocity: 2);
@@ -83,15 +83,13 @@ class _HomePageContentState extends State<HomePageContent>
     }
   }
 
-  double? lerp(double min, double max) =>
-      lerpDouble(min, max, _controller!.value);
+  double? lerp(double min, double max) => lerpDouble(min, max, _controller!.value);
 
-  void _insertNewQuickActionModal(
-      BuildContext context, String title, VoidCallback confirmCallback) {
+  void _insertNewQuickActionModal(BuildContext context, String title, VoidCallback confirmCallback) {
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (BuildContext bc) {
+        builder: (BuildContext context) {
           return Container(
             height: MediaQuery.of(context).size.height * .7,
             child: Wrap(
@@ -112,10 +110,15 @@ class _HomePageContentState extends State<HomePageContent>
                     title: StreamBuilder(
                       stream: _userFinanceBloc!.financeValue,
                       builder: (context, snapshot) {
+                        debugPrint('snapshot.hasData: ${snapshot.hasData}');
+                        debugPrint('snapshot.data: ${snapshot.data.toString()}');
+                        debugPrint('snapshot.hasError: ${snapshot.hasError}');
+                        debugPrint('snapshot.error: ${snapshot.error.toString()}');
+
                         return FormFieldMain(
                           hintText: 'Valor...',
                           onChanged: _userFinanceBloc!.changeFinanceValue,
-                          errorText: snapshot.error.toString(),
+                          errorText: snapshot.hasError ? snapshot.error.toString() : '',
                           marginLeft: 20.0,
                           marginRight: 20.0,
                           marginTop: 0,
@@ -138,7 +141,10 @@ class _HomePageContentState extends State<HomePageContent>
                       'CONFIRMAR',
                       style: TextStyle(fontSize: 20.0),
                     ),
-                    onTap: confirmCallback,
+                    onTap: () {
+                      debugPrint('confirmCallback');
+                      confirmCallback();
+                    },
                   ),
                 ),
               ],
@@ -241,22 +247,19 @@ class _HomePageContentState extends State<HomePageContent>
                 onVerticalDragEnd: _handleDragEnd,
                 onTap: () {
                   if (_hideOptions) {
-                    Navigator.pushNamed(context, FinanceHistoryPage.routeName,
-                        arguments: _expenseProgressValue);
+                    Navigator.pushNamed(context, FinanceHistoryPage.routeName, arguments: _expenseProgressValue);
                   }
                 },
                 child: Container(
                   margin: const EdgeInsets.only(left: 15.0, right: 15.0),
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(8), bottom: Radius.circular(8)),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(8), bottom: Radius.circular(8)),
                   ),
                   child: FutureBuilder<String>(
                     future: _userFinanceBloc!.getUserUID(),
                     builder: (context, userUID) {
-                      if (!userUID.hasData ||
-                          userUID.connectionState == ConnectionState.waiting) {
+                      if (!userUID.hasData || userUID.connectionState == ConnectionState.waiting) {
                         return const Center(
                           child: CircularProgressIndicator(
                             backgroundColor: Colors.white,
@@ -264,17 +267,30 @@ class _HomePageContentState extends State<HomePageContent>
                         );
                       } else {
                         return StreamBuilder<DocumentSnapshot>(
-                          stream:
-                              _userFinanceBloc!.userFinanceDoc(userUID.data),
-                          builder: (context, snapshot) {
+                          stream: _userFinanceBloc!.userFinanceDoc(userUID.data),
+                          builder: (context, AsyncSnapshot<DocumentSnapshot<Object?>> snapshot) {
+                            debugPrint('totalSpent snapshot.hasData: ${snapshot.hasData}');
+                            debugPrint('totalSpent snapshot.data: ${snapshot.data.toString()}');
+                            debugPrint('totalSpent snapshot.hasError: ${snapshot.hasError}');
+                            debugPrint('totalSpent snapshot.error: ${snapshot.error.toString()}');
+
+                            // debugPrint('totalSpent snapshot.data: ${snapshot.data!['totalSpent']}');
+
+                            double totalSpent;
+                            double budget;
                             if (snapshot.hasData && snapshot.data!.exists) {
-                              double totalSpent =
-                                  snapshot.data!['totalSpent'] != null
-                                      ? snapshot.data!['totalSpent'].toDouble()
-                                      : 0;
-                              double budget = snapshot.data!['budget'] != null
-                                  ? snapshot.data!['budget'].toDouble()
-                                  : 0;
+                              try {
+                                totalSpent =
+                                    snapshot.data!['totalSpent'] != null ? snapshot.data!['totalSpent'].toDouble() : 0;
+                              } catch (error) {
+                                totalSpent = 0;
+                              }
+
+                              try {
+                                budget = snapshot.data!['budget'] != null ? snapshot.data!['budget'].toDouble() : 0;
+                              } catch (error) {
+                                budget = 0;
+                              }
 
                               double availableLimit = budget - totalSpent;
 
@@ -295,43 +311,32 @@ class _HomePageContentState extends State<HomePageContent>
                                     ),
                                   ),
                                   Positioned(
-                                    top: MediaQuery.of(context).size.height *
-                                        .14,
+                                    top: MediaQuery.of(context).size.height * .14,
                                     left: 16,
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: <Widget>[
                                         const Text(
                                           "GASTO ATUAL",
                                           style: TextStyle(
-                                              color: Colors.orange,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15.0),
+                                              color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15.0),
                                         ),
                                         Text(
                                           "R\$ " + totalSpent.toString(),
                                           style: const TextStyle(
-                                              color: Colors.orange,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 30.0),
+                                              color: Colors.orange, fontWeight: FontWeight.w400, fontSize: 30.0),
                                         ),
                                         Row(
                                           children: <Widget>[
                                             const Text(
                                               "Limite disponível ",
                                               style: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 15.0),
+                                                  color: Colors.black87, fontWeight: FontWeight.w500, fontSize: 15.0),
                                             ),
                                             Text(
-                                              " R\$ " +
-                                                  availableLimit.toString(),
+                                              " R\$ " + availableLimit.toString(),
                                               style: const TextStyle(
-                                                  color: Colors.green,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15.0),
+                                                  color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15.0),
                                             ),
                                           ],
                                         ),
@@ -347,15 +352,10 @@ class _HomePageContentState extends State<HomePageContent>
                                         quarterTurns: 1,
                                         child: Container(
                                           height: 10,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .25,
+                                          width: MediaQuery.of(context).size.height * .25,
                                           child: LinearProgressIndicator(
                                             backgroundColor: Colors.green,
-                                            valueColor:
-                                                const AlwaysStoppedAnimation<
-                                                    Color>(Colors.orange),
+                                            valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange),
                                             value: _expenseProgressValue,
                                           ),
                                         ),
@@ -371,14 +371,10 @@ class _HomePageContentState extends State<HomePageContent>
                                       padding: const EdgeInsets.all(16),
                                       color: Colors.black12,
                                       child: StreamBuilder(
-                                        stream: _userFinanceBloc!
-                                            .lastExpense(userUID.data),
-                                        builder: (context,
-                                            AsyncSnapshot<QuerySnapshot>
-                                                snapshot) {
+                                        stream: _userFinanceBloc!.lastExpense(userUID.data),
+                                        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                                           if (snapshot.hasData) {
-                                            List<DocumentSnapshot> docs =
-                                                snapshot.data!.docs;
+                                            List<DocumentSnapshot> docs = snapshot.data!.docs;
 
                                             if (docs.isNotEmpty) {
                                               return Center(
@@ -388,18 +384,14 @@ class _HomePageContentState extends State<HomePageContent>
                                                       "Gasto mais recente no valor de",
                                                       style: TextStyle(
                                                           color: Colors.black87,
-                                                          fontWeight:
-                                                              FontWeight.w600,
+                                                          fontWeight: FontWeight.w600,
                                                           fontSize: 15.0),
                                                     ),
                                                     Text(
-                                                      "R\$ " +
-                                                          docs[0]['value']
-                                                              .toString(),
+                                                      "R\$ " + docs[0]['value'].toString(),
                                                       style: const TextStyle(
                                                           color: Colors.black87,
-                                                          fontWeight:
-                                                              FontWeight.w600,
+                                                          fontWeight: FontWeight.w600,
                                                           fontSize: 15.0),
                                                     ),
                                                   ],
@@ -411,8 +403,7 @@ class _HomePageContentState extends State<HomePageContent>
                                                   "Nenhum gasto recente",
                                                   style: TextStyle(
                                                       color: Colors.black87,
-                                                      fontWeight:
-                                                          FontWeight.w600,
+                                                      fontWeight: FontWeight.w600,
                                                       fontSize: 15.0),
                                                 ),
                                               );
@@ -435,20 +426,16 @@ class _HomePageContentState extends State<HomePageContent>
                                   children: <Widget>[
                                     const Text(
                                       "You must set the monthly budget first",
-                                      style: TextStyle(
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15.0),
+                                      style:
+                                          TextStyle(color: Colors.black87, fontWeight: FontWeight.w600, fontSize: 15.0),
                                     ),
                                     const SizedBox(
                                       height: 30.0,
                                     ),
                                     ButtonTransparentMain(
                                       callback: () async {
-                                        _insertNewQuickActionModal(
-                                            context, "Set monthly Budget", () {
-                                          if (_userFinanceBloc!
-                                              .validateFinance()) {
+                                        _insertNewQuickActionModal(context, "Set monthly Budget", () {
+                                          if (_userFinanceBloc!.validateFinance()) {
                                             _userFinanceBloc!.setUserBudget();
                                           }
                                         });
@@ -459,8 +446,7 @@ class _HomePageContentState extends State<HomePageContent>
                                       marginRight: 40.0,
                                       marginLeft: 40.0,
                                       text: 'Set monthly Budget',
-                                      borderColor:
-                                          ColorConstant.colorMainPurple,
+                                      borderColor: ColorConstant.colorMainPurple,
                                       textColor: ColorConstant.colorMainPurple,
                                     ),
                                   ],
@@ -488,16 +474,20 @@ class _HomePageContentState extends State<HomePageContent>
                     iconSize: 32.0,
                     actionText: "Incluir despesa",
                     callback: () {
+                      debugPrint('_isUserBudgetAlreadySet $_isUserBudgetAlreadySet');
                       if (_isUserBudgetAlreadySet) {
-                        _insertNewQuickActionModal(context, "Incluir Despesa",
-                            () {
+                        _insertNewQuickActionModal(context, "Incluir Despesa", () async {
+                          debugPrint('_userFinanceBloc!.validateFinance() ${_userFinanceBloc!.validateFinance()}');
                           if (_userFinanceBloc!.validateFinance()) {
-                            _userFinanceBloc!.addNewExpense();
+                            debugPrint('validateFinance ok!');
+                            await _userFinanceBloc!.addNewExpense();
+                          } else {
+                            debugPrint('validateFinance failed!');
                           }
+                          Navigator.of(context).pop();
                         });
                       } else {
-                        showErrorMessage(
-                            context, "You must set your monthly budget first");
+                        showErrorMessage(context, "You must set your monthly budget first");
                       }
                     },
                   ),
@@ -506,11 +496,11 @@ class _HomePageContentState extends State<HomePageContent>
                       iconSize: 32.0,
                       actionText: "Budget mensal",
                       callback: () {
-                        _insertNewQuickActionModal(
-                            context, "Setar Budget Mensal", () {
+                        _insertNewQuickActionModal(context, "Setar Budget Mensal", () {
                           if (_userFinanceBloc!.validateFinance()) {
                             _userFinanceBloc!.setUserBudget();
                           }
+                          Navigator.of(context).pop();
                         });
                       }),
                   BottomActionButton(

@@ -26,9 +26,10 @@ class FormFieldMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Form Field: $hintText');
+    debugPrint('Form Field error: $errorText');
     return Container(
-      margin:
-          EdgeInsets.only(left: marginLeft, right: marginRight, top: marginTop),
+      margin: EdgeInsets.only(left: marginLeft, right: marginRight, top: marginTop),
       child: TextField(
         key: key,
         onChanged: onChanged,
@@ -42,8 +43,7 @@ class FormFieldMain extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(0))),
           fillColor: Colors.white,
           hintText: hintText,
-          labelStyle:
-              const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
           focusedBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: ColorConstant.colorMainPurple),
           ),

@@ -16,8 +16,7 @@ class AuthenticationResources {
 
   Future<int> loginWithEmailAndPassword(String email, String password) async {
     try {
-      await _firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
+      await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
 
       return 1;
     } on PlatformException catch (e) {
@@ -29,12 +28,10 @@ class AuthenticationResources {
     }
   }
 
-  Future<int> signUpWithEmailAndPassword(
-      String email, String password, String displayName) async {
+  Future<int> signUpWithEmailAndPassword(String email, String password, String displayName) async {
     try {
       /// BREAKING: Version 0.18.0 - The AuthResult class has been renamed to UserCredential.
-      UserCredential authResult = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
+      UserCredential authResult = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       await setUserDisplayName(authResult.user, displayName);
       return 1;
     } on PlatformException catch (e) {

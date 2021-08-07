@@ -24,6 +24,21 @@ linter:
   rules:
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
-
+    always_use_package_imports: true
+    avoid_relative_lib_imports: true
+    avoid_empty_else: true
+    avoid_print: true
+    close_sinks: true
+    empty_statements: true
+    unnecessary_statements: true
+    unsafe_html: true
+    use_key_in_widget_constructors: true
+    valid_regexps: true
+    always_declare_return_types: true
+    always_put_required_named_parameters_first: false
+    always_specify_types: false
+    avoid_double_and_int_checks: true
+    avoid_unnecessary_containers: true
+    avoid_unused_constructor_parameters: true
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

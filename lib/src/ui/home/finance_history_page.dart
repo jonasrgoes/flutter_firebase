@@ -36,8 +36,7 @@ class _FinanceHistoryPageState extends State<FinanceHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    double expenseProgressValue =
-        ModalRoute.of(context)!.settings.arguments as double;
+    double expenseProgressValue = ModalRoute.of(context)!.settings.arguments as double;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -46,10 +45,7 @@ class _FinanceHistoryPageState extends State<FinanceHistoryPage> {
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.white,
-        title: Container(
-            height: 40,
-            child:
-                Image.asset('assets/images/nulogo.png', fit: BoxFit.fitHeight)),
+        title: Container(height: 40, child: Image.asset('assets/images/nulogo.png', fit: BoxFit.fitHeight)),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () {
@@ -67,8 +63,7 @@ class _FinanceHistoryPageState extends State<FinanceHistoryPage> {
             child: FutureBuilder<String>(
                 future: _userFinanceBloc?.getUserUID(),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData ||
-                      snapshot.connectionState == ConnectionState.waiting) {
+                  if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(
                         backgroundColor: Colors.white,
@@ -91,11 +86,8 @@ class _FinanceHistoryPageState extends State<FinanceHistoryPage> {
                                   itemCount: expensesList.length,
                                   itemBuilder: (context, position) {
                                     return ExpenseCard(
-                                        value: expensesList[position]
-                                            .expenseValue
-                                            .toString(),
-                                        isLastOne: position ==
-                                            expensesList.length - 1);
+                                        value: expensesList[position].expenseValue.toString(),
+                                        isLastOne: position == expensesList.length - 1);
                                   });
                             } else {
                               // No data -- Empty collection
@@ -123,8 +115,7 @@ class _FinanceHistoryPageState extends State<FinanceHistoryPage> {
                   width: MediaQuery.of(context).size.height,
                   child: LinearProgressIndicator(
                     backgroundColor: Colors.green,
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(Colors.orange),
+                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange),
                     value: expenseProgressValue,
                   ),
                 ),
@@ -141,8 +132,7 @@ class ExpenseCard extends StatelessWidget {
   final String value;
   final bool isLastOne;
 
-  const ExpenseCard({Key? key, required this.value, required this.isLastOne})
-      : super(key: key);
+  const ExpenseCard({Key? key, required this.value, required this.isLastOne}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -177,10 +167,7 @@ class ExpenseCard extends StatelessWidget {
             margin: const EdgeInsets.only(left: 15.0, top: 5.0),
             child: Text(
               value,
-              style: const TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0),
+              style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 16.0),
             ),
           ),
         ],

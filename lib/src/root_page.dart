@@ -30,7 +30,7 @@ class _RootPageState extends State<RootPage> {
     return StreamBuilder<User?>(
       stream: _currentUser,
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-        return snapshot.hasData ? HomePage() : const LoginPage();
+        return snapshot.hasData ? const HomePage() : const LoginPage();
       },
     );
   }

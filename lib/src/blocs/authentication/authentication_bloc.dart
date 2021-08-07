@@ -6,7 +6,7 @@ import 'package:flutter_firebase/src/utils/validator.dart';
 import 'package:flutter_firebase/src/utils/values/string_constants.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../bloc.dart';
+import 'package:flutter_firebase/src/blocs/bloc.dart';
 
 class AuthenticationBloc implements Bloc {
   final _repository = Repository();
@@ -16,8 +16,7 @@ class AuthenticationBloc implements Bloc {
   final _isSignedIn = BehaviorSubject<bool>();
 
   Stream<String> get email => _email.stream.transform(_validateEmail);
-  Stream<String> get displayName =>
-      _displayName.stream.transform(_validateDisplayName);
+  Stream<String> get displayName => _displayName.stream.transform(_validateDisplayName);
   Stream<String> get password => _password.stream.transform(_validatePassword);
   Stream<bool> get signInStatus => _isSignedIn.stream;
 
@@ -27,8 +26,7 @@ class AuthenticationBloc implements Bloc {
   void Function(String) get changePassword => _password.sink.add;
   void Function(bool) get showProgressBar => _isSignedIn.sink.add;
 
-  final _validateEmail =
-      StreamTransformer<String, String>.fromHandlers(handleData: (email, sink) {
+  final _validateEmail = StreamTransformer<String, String>.fromHandlers(handleData: (email, sink) {
     if (Validator.validateEmail(email)) {
       sink.add(email);
     } else {
@@ -36,8 +34,7 @@ class AuthenticationBloc implements Bloc {
     }
   });
 
-  final _validatePassword = StreamTransformer<String, String>.fromHandlers(
-      handleData: (password, sink) {
+  final _validatePassword = StreamTransformer<String, String>.fromHandlers(handleData: (password, sink) {
     if (Validator.validatePassword(password)) {
       sink.add(password);
     } else {
@@ -45,8 +42,7 @@ class AuthenticationBloc implements Bloc {
     }
   });
 
-  final _validateDisplayName = StreamTransformer<String, String>.fromHandlers(
-      handleData: (displayName, sink) {
+  final _validateDisplayName = StreamTransformer<String, String>.fromHandlers(handleData: (displayName, sink) {
     if (displayName.length > 5) {
       sink.add(displayName);
     } else {
@@ -55,12 +51,11 @@ class AuthenticationBloc implements Bloc {
   });
 
   bool validateEmailAndPassword() {
-    if (_email.value != null &&
+    if (_email.valueOrNull != null &&
         _email.value.isNotEmpty &&
         _email.value.contains("@") &&
-        _password.value != null &&
+        _password.valueOrNull != null &&
         _password.value.isNotEmpty &&
-        _email.value.contains('@') &&
         _password.value.length > 5) {
       return true;
     }
@@ -68,30 +63,26 @@ class AuthenticationBloc implements Bloc {
   }
 
   void saveCurrentUserDisplayName(SharedPreferences prefs) {
-    // print("SAVED DISPLAYNAME: " + _displayName.value);
+    print("SAVED DISPLAYNAME: " + _displayName.value);
     PrefsManager prefsManager = PrefsManager();
     prefsManager.setCurrentUserDisplayName(prefs, _displayName.value);
   }
 
   bool validateDisplayName() {
-    return _displayName.value != null &&
-        _displayName.value.isNotEmpty &&
-        _displayName.value.length > 5;
+    return _displayName.value.isNotEmpty && _displayName.value.length > 5;
   }
 
   // Firebase methods
   Future<int> loginUser() async {
     showProgressBar(true);
-    int response = await _repository.loginWithEmailAndPassword(
-        _email.value, _password.value);
+    int response = await _repository.loginWithEmailAndPassword(_email.value, _password.value);
     showProgressBar(false);
     return response;
   }
 
   Future<int> registerUser() async {
     showProgressBar(true);
-    int response = await _repository.signUpWithEmailAndPassword(
-        _email.value, _password.value, _displayName.value);
+    int response = await _repository.signUpWithEmailAndPassword(_email.value, _password.value, _displayName.value);
     showProgressBar(false);
     return response;
   }

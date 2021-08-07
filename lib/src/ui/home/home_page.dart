@@ -65,33 +65,23 @@ class _HomePageState extends State<HomePage> {
                   /// BREAKING: Version 0.18.0 - The FirebaseUser class has been renamed to User
                   StreamBuilder<User?>(
                     stream: _userFinanceBloc!.currentUser,
-                    builder:
-                        (BuildContext context, AsyncSnapshot<User?> snapshot) {
+                    builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
                       if (snapshot.hasData) {
                         User? user = snapshot.data;
 
                         String? displayName = user!.displayName;
 
-                        displayName ??= _userFinanceBloc!
-                            .getCurrentUserDisplayNameFromPrefs(_prefs!);
+                        displayName ??= _userFinanceBloc!.getCurrentUserDisplayNameFromPrefs(_prefs!);
 
-                        if (displayName != null) {
-                          return Container(
-                            height: 50.0,
-                            margin:
-                                const EdgeInsets.only(top: 50.0, left: 10.0),
-                            alignment: Alignment.center,
-                            child: Text(
-                              displayName,
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20.0),
-                            ),
-                          );
-                        } else {
-                          return Container();
-                        }
+                        return Container(
+                          height: 50.0,
+                          margin: const EdgeInsets.only(top: 50.0, left: 10.0),
+                          alignment: Alignment.center,
+                          child: Text(
+                            displayName,
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0),
+                          ),
+                        );
                       } else {
                         return Container();
                       }

@@ -7,26 +7,33 @@ class Repository {
   final _authResources = AuthenticationResources();
   final _userFinanceResources = FirestoreResources();
 
-  /// Authentication
+  /// AUTH
   /// BREAKING: Version 0.18.0 - The FirebaseUser class has been renamed to User
   Stream<User?> get onAuthStateChange => _authResources.onAuthStateChange;
+
   Future<int> loginWithEmailAndPassword(String email, String password) =>
       _authResources.loginWithEmailAndPassword(email, password);
-  Future<int> signUpWithEmailAndPassword(
-          String email, String password, String displayName) =>
+
+  Future<int> signUpWithEmailAndPassword(String email, String password, String displayName) =>
       _authResources.signUpWithEmailAndPassword(email, password, displayName);
+
   Future<void> signOut() => _authResources.signOut;
+
   Future<String> getUserUID() => _authResources.getUserUID();
 
-  /// User Finance - Firestore
-  Stream<DocumentSnapshot> userFinanceDoc(String userUID) =>
-      _userFinanceResources.userFinanceDoc(userUID);
-  Future<void> setUserBudget(String userUID, double? budget) =>
-      _userFinanceResources.setUserBudget(userUID, budget!);
-  Future<void> addNewExpense(String userUID, double? expenseValue) =>
-      _userFinanceResources.addNewExpense(userUID, expenseValue!);
-  Stream<QuerySnapshot> expensesList(String userUID) =>
-      _userFinanceResources.expensesList(userUID);
-  Stream<QuerySnapshot> lastExpense(String userUID) =>
-      _userFinanceResources.lastExpense(userUID);
+  /// FIRESTORE
+  Stream<DocumentSnapshot> userFinanceDoc(String userUID) => _userFinanceResources.userFinanceDoc(userUID);
+
+  Future<void> setUserBudget(String userUID, double? budget) => _userFinanceResources.setUserBudget(userUID, budget!);
+
+  Future<void> addNewExpense(String userUID, double? expenseValue) async {
+    print('addNewExpense: $expenseValue');
+    _userFinanceResources.addNewExpense(userUID, expenseValue!);
+  }
+
+  Future<void> updateTotal(String userUID) => _userFinanceResources.updateTotal(userUID);
+
+  Stream<QuerySnapshot> expensesList(String userUID) => _userFinanceResources.expensesList(userUID);
+
+  Stream<QuerySnapshot> lastExpense(String userUID) => _userFinanceResources.lastExpense(userUID);
 }

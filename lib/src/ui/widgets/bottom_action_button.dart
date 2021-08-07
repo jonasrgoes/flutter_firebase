@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../utils/values/colors.dart';
+import 'package:flutter_firebase/src/utils/values/colors.dart';
 
 class BottomActionButton extends StatelessWidget {
   final IconData icon;
@@ -26,8 +26,7 @@ class BottomActionButton extends StatelessWidget {
         margin: const EdgeInsets.only(left: 25.0, right: 5.0),
         decoration: const BoxDecoration(
           color: ColorConstant.colorAccentPurple,
-          borderRadius: BorderRadius.vertical(
-              top: Radius.circular(8), bottom: Radius.circular(8)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(8), bottom: Radius.circular(8)),
         ),
         alignment: Alignment.topLeft,
         child: Column(
@@ -45,10 +44,7 @@ class BottomActionButton extends StatelessWidget {
                 alignment: Alignment.bottomLeft,
                 child: Text(
                   actionText,
-                  style: const TextStyle(
-                      color: Colors.white70,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 20.0),
+                  style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w400, fontSize: 20.0),
                 ),
               ),
             ),
