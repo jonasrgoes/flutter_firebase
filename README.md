@@ -2,7 +2,7 @@
 
 ## The correct way to start an application in Flutter.
 
-This code can be useful as a skeleton to start a Flutter project using reactive programming with RxDart.
+This code can be useful as a skeleton or "How To Do" to start a Flutter project using Firebase, Firestore and reactive programming with RxDart.
 
 ## Topics
 
