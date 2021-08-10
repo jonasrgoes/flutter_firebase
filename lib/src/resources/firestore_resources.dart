@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_firebase/src/models/expense_model.dart';
 
 class FirestoreResources {
   /// DEPRECATED: Version 0.14.0 - Class Firestore is now deprecated. Use FirebaseFirestore instead.
