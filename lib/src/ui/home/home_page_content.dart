@@ -6,6 +6,7 @@ import 'package:flutter_firebase/src/blocs/user_finance/user_finance_bloc_provid
 import 'package:flutter_firebase/src/ui/widgets/bottom_action_button.dart';
 import 'package:flutter_firebase/src/ui/widgets/options_buttons.dart';
 import 'package:flutter_firebase/src/utils/values/colors.dart';
+import 'package:flutter_firebase/src/utils/values/string_constants.dart';
 import 'package:flutter_firebase/src/ui/widgets/button_transparent_main.dart';
 import 'package:flutter_firebase/src/ui/widgets/form_field_main.dart';
 import 'package:flutter_firebase/src/ui/home/finance_history_page.dart';
@@ -90,7 +91,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
         isScrollControlled: true,
         context: context,
         builder: (BuildContext context) {
-          return Container(
+          return SizedBox(
             height: MediaQuery.of(context).size.height * .7,
             child: Wrap(
               children: <Widget>[
@@ -138,7 +139,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                       size: 28.0,
                     ),
                     title: const Text(
-                      'CONFIRMAR',
+                      StringConstants.confirm,
                       style: TextStyle(fontSize: 20.0),
                     ),
                     onTap: () {
@@ -182,7 +183,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                             ),
                             const OptionsButton(
                               icon: Icons.help_outline,
-                              text: "Sobre o App",
+                              text: StringConstants.about,
                             ),
                             const SizedBox(
                               height: 10.0,
@@ -193,10 +194,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                             const SizedBox(
                               height: 10.0,
                             ),
-                            const OptionsButton(
-                              icon: Icons.perm_identity,
-                              text: "Meu Perfil",
-                            ),
+                            const OptionsButton(icon: Icons.perm_identity, text: StringConstants.profile),
                             const SizedBox(
                               height: 10.0,
                             ),
@@ -208,7 +206,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                             ),
                             const OptionsButton(
                               icon: Icons.settings,
-                              text: "Configurações do App",
+                              text: StringConstants.settings,
                             ),
                             const SizedBox(
                               height: 10.0,
@@ -227,7 +225,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                               height: 50,
                               marginLeft: 0,
                               marginRight: 0,
-                              text: "SAIR DA CONTA",
+                              text: StringConstants.logout,
                               borderColor: Colors.white70,
                               textColor: Colors.white70,
                             )
@@ -317,7 +315,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: <Widget>[
                                         const Text(
-                                          "GASTO ATUAL",
+                                          StringConstants.currentExpense,
                                           style: TextStyle(
                                               color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15.0),
                                         ),
@@ -329,7 +327,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                                         Row(
                                           children: <Widget>[
                                             const Text(
-                                              "Limite disponível ",
+                                              StringConstants.limit,
                                               style: TextStyle(
                                                   color: Colors.black87, fontWeight: FontWeight.w500, fontSize: 15.0),
                                             ),
@@ -350,7 +348,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                                       tag: 'progress-budget',
                                       child: RotatedBox(
                                         quarterTurns: 1,
-                                        child: Container(
+                                        child: SizedBox(
                                           height: 10,
                                           width: MediaQuery.of(context).size.height * .25,
                                           child: LinearProgressIndicator(
@@ -381,7 +379,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                                                 child: Column(
                                                   children: <Widget>[
                                                     const Text(
-                                                      "Gasto mais recente no valor de",
+                                                      StringConstants.mostRecentExpense,
                                                       style: TextStyle(
                                                           color: Colors.black87,
                                                           fontWeight: FontWeight.w600,
@@ -400,7 +398,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                                             } else {
                                               return const Center(
                                                 child: Text(
-                                                  "Nenhum gasto recente",
+                                                  StringConstants.noRecentExpenses,
                                                   style: TextStyle(
                                                       color: Colors.black87,
                                                       fontWeight: FontWeight.w600,
@@ -425,7 +423,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
                                     const Text(
-                                      "You must set the monthly budget first",
+                                      StringConstants.requireMonthlyBudget,
                                       style:
                                           TextStyle(color: Colors.black87, fontWeight: FontWeight.w600, fontSize: 15.0),
                                     ),
@@ -437,6 +435,9 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                                         _insertNewQuickActionModal(context, "Set monthly Budget", () {
                                           if (_userFinanceBloc!.validateFinance()) {
                                             _userFinanceBloc!.setUserBudget();
+                                            Navigator.of(context).pop();
+                                          } else {
+                                            debugPrint('validateFinance failed!');
                                           }
                                         });
                                       },
@@ -445,7 +446,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                                       fontSize: 20.0,
                                       marginRight: 40.0,
                                       marginLeft: 40.0,
-                                      text: 'Set monthly Budget',
+                                      text: StringConstants.setMonthlyBudget,
                                       borderColor: ColorConstant.colorMainPurple,
                                       textColor: ColorConstant.colorMainPurple,
                                     ),
@@ -472,7 +473,7 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                   BottomActionButton(
                     icon: Icons.money_off,
                     iconSize: 32.0,
-                    actionText: "Incluir despesa",
+                    actionText: StringConstants.insertExpense,
                     callback: () {
                       debugPrint('_isUserBudgetAlreadySet $_isUserBudgetAlreadySet');
                       if (_isUserBudgetAlreadySet) {
@@ -481,38 +482,40 @@ class _HomePageContentState extends State<HomePageContent> with SingleTickerProv
                           if (_userFinanceBloc!.validateFinance()) {
                             debugPrint('validateFinance ok!');
                             await _userFinanceBloc!.addNewExpense();
+                            Navigator.of(context).pop();
                           } else {
                             debugPrint('validateFinance failed!');
                           }
-                          Navigator.of(context).pop();
                         });
                       } else {
-                        showErrorMessage(context, "You must set your monthly budget first");
+                        showErrorMessage(context, StringConstants.requireMonthlyBudget);
                       }
                     },
                   ),
                   BottomActionButton(
                       icon: Icons.monetization_on,
                       iconSize: 32.0,
-                      actionText: "Budget mensal",
+                      actionText: StringConstants.monthlyBudget,
                       callback: () {
-                        _insertNewQuickActionModal(context, "Setar Budget Mensal", () {
+                        _insertNewQuickActionModal(context, StringConstants.setMonthlyBudget, () {
                           if (_userFinanceBloc!.validateFinance()) {
                             _userFinanceBloc!.setUserBudget();
+                            Navigator.of(context).pop();
+                          } else {
+                            debugPrint('validateFinance failed!');
                           }
-                          Navigator.of(context).pop();
                         });
                       }),
                   BottomActionButton(
                     icon: Icons.group_add,
                     iconSize: 32.0,
-                    actionText: "Indicar amigos",
+                    actionText: StringConstants.tellAFriend,
                     callback: () {},
                   ),
                   BottomActionButton(
                     icon: Icons.help_outline,
                     iconSize: 32.0,
-                    actionText: "Sobre",
+                    actionText: StringConstants.about,
                     callback: () {},
                   ),
                 ],

@@ -1,14 +1,12 @@
 import 'dart:ui';
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/src/blocs/authentication/authentication_bloc.dart';
 import 'package:flutter_firebase/src/blocs/authentication/authentication_bloc_provider.dart';
 import 'package:flutter_firebase/src/ui/widgets/button_transparent_main.dart';
 import 'package:flutter_firebase/src/utils/values/colors.dart';
-import 'package:flutter_firebase/src/ui/widgets/form_field_main.dart';
 import 'package:flutter_firebase/src/utils/values/string_constants.dart';
+import 'package:flutter_firebase/src/ui/widgets/form_field_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const double minHeight = 60.0;
@@ -237,7 +235,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                                                   'snapshot.error: ${snapshot.error.toString()}');
 
                                                               return FormFieldMain(
-                                                                hintText: 'Email...',
+                                                                hintText: StringConstants.email,
                                                                 onChanged: _authBloc.changeEmail,
                                                                 errorText:
                                                                     snapshot.hasError ? snapshot.error.toString() : '',
@@ -260,7 +258,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                                               onChanged: _authBloc.changePassword,
                                                               errorText:
                                                                   snapshot.hasError ? snapshot.error.toString() : '',
-                                                              hintText: 'Password...',
+                                                              hintText: StringConstants.password,
                                                               marginLeft: 20.0,
                                                               marginRight: 20.0,
                                                               marginTop: 15.0,
@@ -281,7 +279,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                                               onChanged: _authBloc.changeDisplayName,
                                                               errorText:
                                                                   snapshot.hasError ? snapshot.error.toString() : '',
-                                                              hintText: 'Display Name...',
+                                                              hintText: StringConstants.displayName,
                                                               marginLeft: 20.0,
                                                               marginRight: 20.0,
                                                               marginTop: 15.0,
@@ -301,7 +299,11 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                                     child: StreamBuilder(
                                                         stream: _authBloc.signInStatus,
                                                         builder: (context, snapshot) {
-                                                          debugPrint(jsonEncode(snapshot));
+                                                          debugPrint(snapshot.toString());
+                                                          debugPrint(
+                                                              'snapshot.hasData.toString(): ${snapshot.hasData.toString()}');
+                                                          debugPrint(
+                                                              'snapshot.hasError.toString(): ${snapshot.hasError.toString()}');
                                                           if (!snapshot.hasData || snapshot.hasError) {
                                                             return ButtonTransparentMain(
                                                               callback: () async {
@@ -422,7 +424,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                                               onChanged: _authBloc.changeEmail,
                                                               errorText:
                                                                   snapshot.hasError ? snapshot.error.toString() : '',
-                                                              hintText: 'Email...',
+                                                              hintText: StringConstants.email,
                                                               marginLeft: 20.0,
                                                               marginRight: 20.0,
                                                               marginTop: 0,
@@ -443,7 +445,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                                               onChanged: _authBloc.changePassword,
                                                               errorText:
                                                                   snapshot.hasError ? snapshot.error.toString() : '',
-                                                              hintText: 'Password...',
+                                                              hintText: StringConstants.password,
                                                               marginLeft: 20.0,
                                                               marginRight: 20.0,
                                                               marginTop: 15.0,
@@ -483,7 +485,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                                               fontSize: 20.0,
                                                               marginRight: 30.0,
                                                               marginLeft: 30.0,
-                                                              text: 'Login',
+                                                              text: StringConstants.login,
                                                               borderColor: ColorConstant.colorMainPurple,
                                                               textColor: ColorConstant.colorMainPurple,
                                                             );

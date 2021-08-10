@@ -28,7 +28,7 @@ class UserFinanceBloc implements Bloc {
   });
 
   bool validateFinance() {
-    return _financeValue.value.isNotEmpty;
+    return _financeValue.hasValue && _financeValue.value.isNotEmpty;
   }
 
   Stream<User?> get currentUser => _repository.onAuthStateChange;

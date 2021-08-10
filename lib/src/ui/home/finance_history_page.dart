@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_firebase/src/blocs/user_finance/user_finance_bloc.dart';
 import 'package:flutter_firebase/src/blocs/user_finance/user_finance_bloc_provider.dart';
 import 'package:flutter_firebase/src/models/expense_model.dart';
+import 'package:flutter_firebase/src/utils/values/string_constants.dart';
 
 class FinanceHistoryPage extends StatefulWidget {
   static const String routeName = 'finance_history_page';
@@ -45,7 +46,7 @@ class _FinanceHistoryPageState extends State<FinanceHistoryPage> {
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.white,
-        title: Container(height: 40, child: Image.asset('assets/images/nulogo.png', fit: BoxFit.fitHeight)),
+        title: SizedBox(height: 40, child: Image.asset('assets/images/nulogo.png', fit: BoxFit.fitHeight)),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () {
@@ -92,7 +93,7 @@ class _FinanceHistoryPageState extends State<FinanceHistoryPage> {
                             } else {
                               // No data -- Empty collection
                               return const Center(
-                                child: Text('No expenses to show'),
+                                child: Text(StringConstants.noExpenses),
                               );
                             }
                           } else {
@@ -110,7 +111,7 @@ class _FinanceHistoryPageState extends State<FinanceHistoryPage> {
               tag: 'progress-budget',
               child: RotatedBox(
                 quarterTurns: 1,
-                child: Container(
+                child: SizedBox(
                   height: 10,
                   width: MediaQuery.of(context).size.height,
                   child: LinearProgressIndicator(
